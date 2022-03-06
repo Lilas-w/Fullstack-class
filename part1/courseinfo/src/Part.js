@@ -1,9 +1,10 @@
 import React from "react";
-const Part = (props) => {
+const Part = ({ part }) => {
+    //不能在此处加key
     return (
         <>
             <p>
-                {props.parts.name} {props.parts.exercises}
+                {part.name} {part.exercises}
             </p>
         </>
     )
