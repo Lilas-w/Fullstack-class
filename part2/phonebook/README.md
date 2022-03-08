@@ -7,7 +7,10 @@ hooks执行顺序问题，不能在if条件句中使用useState<br>
 
 搜索字段：使用三元表达式、filter函数和includes函数，以及toLowerCase方法，实现按姓名筛选人员列表功能<br>
 
-
-
-
+与后端通信：<br>
+1.使用json-server：<br>
+```npm install json-server --save-dev```<br>
+更改package.json：```"server": "json-server -p3001 --watch db.json"```<br>
+```npm run server```<br>
+2.使用axios库从服务器获取数据的初始状态。```npm install axios``` 使用Effect hook完成获取操作。
 
