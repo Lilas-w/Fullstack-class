@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Filter from './component/Filter'
 import PersonForm from './component/PersonForm'
 import Persons from './component/Persons'
-import axios from 'axios'
+import PersonServices from './services/PersonServices'
 
 const App = () => {
   const [persons, setPersons] = useState([])//怎么传id?是服务器生成的，在返回的res.data里有id
@@ -11,11 +11,9 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
-      })
+    PersonServices.getAll().then(persons => {  //先调用getAll再调用一个then处理数据
+      setPersons(persons);
+    })
   }, []);
 
   const handleNameChange = (event) => {
@@ -32,22 +30,38 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    setNewName('')
+    setNewName('') //将输入框清零
     setNewNumber('')
 
-    const existingPerson = persons.find(p => p.name === obj.name)  //找到已经存在于persons中的person
-    if (existingPerson) {
-      window.alert(`${existingPerson.name} is already added to phonebook`)  //注意是window.alert
+    const personToUpdate = persons.find(p => p.name === obj.name)  //先找到已存在的同名person
+    if (personToUpdate) {
+      const ok = window.confirm(`${personToUpdate.name} is already added to phonebook,replace the old number with a new one?`)
+      if (ok) {
+        PersonServices.update(personToUpdate.id, { ...personToUpdate, number: newNumber })
+          .then(res => { setPersons(persons.map(p => p.id === personToUpdate.id ? res : p)) })
+        return //不再执行下面内容
+      }
     }
 
-    axios
-      .post('http://localhost:3001/persons', obj)
-      .then(res => {
-        setPersons(persons.concat(res.data))
-      })
+    PersonServices.create(obj).then(personToSave => {   //多加一步then调用
+      setPersons(persons.concat(personToSave))
+    })
   }
 
+
   const personsToshow = (filter.length === 0) ? persons : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())); //不区分大小写的搜索功能
+
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(p => p.id === id) //先通过id找到要删除的person
+    if (personToDelete) {
+      const ok = window.confirm(`Ready to delete ${personToDelete.name}?`);
+      if (ok) {
+        PersonServices.remove(id);
+      }
+    }
+    const personsRemain = persons.filter(p => p.id !== id)
+    setPersons(personsRemain);
+  }
 
   return (
     <div>
@@ -56,7 +70,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm name={newName} number={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addPerson={addPerson} />
       <h2>Numbers</h2>
-      <Persons persons={personsToshow} />
+      <Persons persons={personsToshow} deletePerson={deletePerson} />
     </div >
   )
 }

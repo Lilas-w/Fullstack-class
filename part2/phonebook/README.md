@@ -3,7 +3,7 @@
 
 判断已存在输入，弹窗警告：使用find方法<br>
 
-对已存在输入弹窗警告后，仍将输入加入state：<br>
+对已存在输入弹窗警告后，仍将输入加入state：加入else，已通过输入判断再发送post请求<br>
 
 hooks执行顺序问题，不能在if条件句中使用useState()。在条件句中使用useState等，会相当于建两组state setter，第二次渲染时只用到一组，会和别组state setter混乱顺序<br>
 
@@ -16,4 +16,7 @@ hooks执行顺序问题，不能在if条件句中使用useState()。在条件句
 记得新建一个终端启动json-server ```npm run server```<br>
 2.使用axios库从服务器获取数据的初始状态。```npm install axios``` 使用Effect hook完成获取操作。<br>
 3.将添加的号码保存到后端服务器中<br>
+4.将处理与后端的通信的代码提取到单独模块。export default {函数名}，import 组件名。组件名.函数名调用<br>
+5.删除列表中的项：使用axios.delete请求，请求没有发送任何数据。和数组的 filter方法完成。先找出要删除的person。button中调用删除函数时使用onClick，传入所需参数<br>
+6.更新同名项的内容：使用axios.put请求。注意和delete一样，都是更改对应资源的 URL 。<br>
 
