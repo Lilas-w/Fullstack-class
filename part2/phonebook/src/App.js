@@ -5,9 +5,7 @@ import Persons from './component/Persons'
 import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' }  //怎么传id?
-  ])
+  const [persons, setPersons] = useState([])//怎么传id?是服务器生成的，在返回的res.data里有id
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
@@ -34,14 +32,19 @@ const App = () => {
       name: newName,
       number: newNumber
     }
+    setNewName('')
+    setNewNumber('')
 
-    let equal = persons.find(person => person.name === newName)
-    if (equal) {
-      window.alert(`${newName} is already added to phonebook`)  //注意是window.alert
-      setPersons(persons)  //在if条件中写setter函数是没关系的。只是在条件句中使用useState等，会相当于建两组state setter，第二次渲染时只用到一组，会和别组state setter混乱顺序
-    } else {
-      setPersons(persons.concat(obj)) //为什么concat参数写[obj]和obj效果一样
+    const existingPerson = persons.find(p => p.name === obj.name)  //找到已经存在于persons中的person
+    if (existingPerson) {
+      window.alert(`${existingPerson.name} is already added to phonebook`)  //注意是window.alert
     }
+
+    axios
+      .post('http://localhost:3001/persons', obj)
+      .then(res => {
+        setPersons(persons.concat(res.data))
+      })
   }
 
   const personsToshow = (filter.length === 0) ? persons : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())); //不区分大小写的搜索功能
