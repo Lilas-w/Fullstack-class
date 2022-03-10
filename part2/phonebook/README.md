@@ -20,3 +20,4 @@ hooks执行顺序问题，不能在if条件句中使用useState()。在条件句
 5.删除列表中的项：使用axios.delete请求，请求没有发送任何数据。和数组的 filter方法完成。先找出要删除的person。button中调用删除函数时使用onClick，传入所需参数<br>
 6.更新同名项的内容：使用axios.put请求。注意和delete一样，都是更改对应资源的 URL 。<br>
 
+异步处理：在成功操作（新增一人/更改号码）执行后，有持续几秒钟的通知。使用useState和setTimeout实现。初始值需要设置成null<br>
